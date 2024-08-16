@@ -1,0 +1,12 @@
+<label for="subdistrict-select" class="form-label">Subdistrict</label>
+<select class="form-select" 
+        name="subdistrict" 
+        id="subdistrict-select"
+        hx-get="{% url 'village_url' %}"
+        hx-trigger="change"
+        hx-target="#village">
+    <option selected>Open select menu</option>
+    {% for i in subdistricts %}
+    <option value="{{ i.subdistrictcode }}">{{ i.englishname }}</option>
+    {% endfor %} 
+</select>

@@ -1,0 +1,9 @@
+<label for="village-select" class="form-label">Village</label>
+<select class="form-select" 
+        name="village" 
+        id="village-select">
+    <option selected>Open select menu</option>
+    {% for i in villages %}
+    <option value="{{ i.villagecode }}">{{ i.englishname }}</option>
+    {% endfor %} 
+</select>

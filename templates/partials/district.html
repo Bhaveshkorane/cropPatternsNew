@@ -1,0 +1,12 @@
+<label for="district-select" class="form-label">District</label>
+<select class="form-select" 
+        name="district" 
+        id="district-select"
+        hx-get="{% url 'subdistrict_url' %}"
+        hx-trigger="change"
+        hx-target="#subdistrict">
+    <option selected>Open select menu</option>
+    {% for i in districts %}
+    <option value="{{ i.districtcode }}">{{ i.englishname }}</option>
+    {% endfor %} 
+</select>

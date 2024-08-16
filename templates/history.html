@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if messages %}
+    <div class="alert-container mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}   
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card mt-4">
+        <div class="card-header bg-info">
+            <h2>History</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">sr no</th>
+                        <th scope="col">District</th>
+                        <th scope="col">crop </th>
+                        <th scope="col">Added time </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in history %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ data.district }}</td>
+                        <td>{{ data.crop_type}}</td>
+                        <td>{{ data.added_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    #heading {
+        background-color: #17252A !important;
+    }
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    .bg-light {
+        background-color: #3AAFA9 !important;
+    }
+    .btn-secondary {
+        background-color: #000000;
+        border-color: #6c757d;
+    }
+    .card {
+        background-color:  #3AAFA9;
+    }
+    .card-header {
+        background-color: #17252A !important;
+        color: #FEFFFF !important;
+    }
+    .card-title {
+        color: #FEFFFF !important;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+<label for="state-select" class="form-label">State</label>
+        <select class="form-select" 
+                name="state" 
+                id="state-select"
+                hx-get="{% url 'district_url' %}"
+                hx-trigger="change"
+                hx-target="#district"
+                required>
+            <option selected >Open select menu</option>
+            {% for i in states %}
+            <option value="{{ i.statecode }}">{{ i.englishname }}</option>
+            {% endfor %} 
+        </select>
+
+        
+        

@@ -1,0 +1,14 @@
+time required for adding data before async:
+total time taken = 84.6 to add ---All---crop in state = Madhya Pradesh district-->Chhatarpur
+total time taken = 7.10 to add ---All---crop in state = Rajasthan district = Banswara
+total time taken = 7.39 to add ---All---crop in state = Rajasthan district = Banswara
+total time taken = 4.90 to add ---cotton---crop in state = Maharashtra district = Beed
+total time taken = 5.08 to add ---cotton---crop in state = Maharashtra district = Beed
+
+
+time required for adding data after async:
+total time taken = 73.34 to add ---cotton---crop in state = Maharashtra district = Beed
+total time taken = 68.70 to add ---cotton---crop in state = Maharashtra district = Beed
+total time taken = 10.68 to add ---cotton---crop in state = Maharashtra district = Beed
+total time taken = 7.28  to add ---cotton---crop in state = Maharashtra district = Beed
+

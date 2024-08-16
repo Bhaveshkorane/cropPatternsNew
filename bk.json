@@ -1,0 +1,202 @@
+{
+    "village_name": "Sample Village",
+    "year": 2024,
+    "agriculture_data": {
+      "total_area_under_cultivation": 2500.75,
+      "crops": 
+      [
+        {
+          "crop_type": "Wheat",
+          "area_cultivated": 500.25,
+          "yield_per_hectare": 4.2,
+          "soil_type": "Loam",
+          "irrigation_method": "Sprinkler",
+          "weather_data": {
+            "temperature": {
+              "average": 24.5,
+              "max": 30.2,
+              "min": 18.3
+            },
+            "rainfall": {
+              "total_mm": 550,
+              "rainy_days": 45
+            },
+            "humidity": {
+              "average_percentage": 60
+            }
+          }
+        },
+        {
+          "crop_type": "Rice",
+          "area_cultivated": 600.50,
+          "yield_per_hectare": 3.8,
+          "soil_type": "Clay",
+          "irrigation_method": "Flood",
+
+          "weather_data": {
+            "temperature": {
+              "average": 26.3,
+              "max": 33.1,
+              "min": 20.7
+            },
+            "rainfall": {
+              "total_mm": 620,
+              "rainy_days": 50
+            },
+            "humidity": {
+              "average_percentage": 70
+            }
+          },
+
+          "pesticide_and_fertilizer_usage": {
+            "fertilizers": [
+              {
+                "type": "DAP",
+                "quantity_kg": 1200
+              },
+              {
+                "type": "MOP",
+                "quantity_kg": 800
+              }
+            ],
+            "pesticides": [
+              {
+                "type": "Herbicide",
+                "quantity_l": 150
+              }
+            ]
+          },
+          "crop_diseases_and_pests": {
+            "diseases_reported": [
+              "Bacterial Blight"
+            ],
+            "pest_infestation_level": "Low"
+          },
+          "market_data": {
+            "price_per_kg": 18.75,
+            "demand_trend": "Stable",
+            "market_access": "Local, Regional, and National Markets",
+            "export_data": {
+              "exported_quantity_kg": 1500,
+              "export_price_per_kg": 20
+            }
+          },
+          "labor_costs": {
+            "total_cost": 25000,
+            "breakdown": {
+              "sowing": 6000,
+              "weeding": 4000,
+              "harvesting": 15000,
+              "transportation": 1500,
+              "storage": 2500
+            }
+          }
+        },
+        {
+          "crop_type": "Maize",
+          "area_cultivated": 400.00,
+          "yield_per_hectare": 5.1,
+          "soil_type": "Sandy Loam",
+          "irrigation_method": "Drip",
+          "weather_data": {
+            "temperature": {
+              "average": 22.7,
+              "max": 29.5,
+              "min": 16.4
+            },
+            "rainfall": {
+              "total_mm": 470,
+              "rainy_days": 38
+            },
+            "humidity": {
+              "average_percentage": 55
+            }
+          },
+          "pesticide_and_fertilizer_usage": {
+            "fertilizers": [
+              {
+                "type": "NPK",
+                "quantity_kg": 900
+              },
+              {
+                "type": "Compost",
+                "quantity_kg": 600
+              }
+            ],
+            "pesticides": [
+              {
+                "type": "Fungicide",
+                "quantity_l": 80
+              }
+            ]
+          },
+          "crop_diseases_and_pests": {
+            "diseases_reported": [
+              "Leaf Blight"
+            ],
+            "pest_infestation_level": "High"
+          },
+          "market_data": {
+            "price_per_kg": 15,
+            "demand_trend": "Decreasing",
+            "market_access": "Local Markets",
+            "export_data": {
+              "exported_quantity_kg": 500,
+              "export_price_per_kg": 16
+            }
+          },
+          "labor_costs": {
+            "total_cost": 15000,
+            "breakdown": {
+              "sowing": 4000,
+              "weeding": 2500,
+              "harvesting": 8000,
+              "transportation": 500,
+              "storage": 1500
+            }
+          }
+        }
+      ],
+      "total_yield": {
+        "wheat": 2100.5,
+        "rice": 2281.9,
+        "maize": 2040.0
+      }
+    },
+    "sustainability_metrics": {
+      "water_usage_efficiency": 0.85,
+      "soil_health_index": {
+        "ph": 6.8,
+        "organic_matter_percentage": 3.2
+      },
+      "renewable_energy_usage": {
+        "solar_panels_installed": 50,
+        "energy_generated_kwh": 1200
+      },
+      "carbon_footprint": {
+        "total_emissions_tonnes": 150,
+        "emission_reduction_trend": "Decreasing"
+      },
+      "biodiversity_index": {
+        "species_count": 120,
+        "rare_species": 5
+      }
+    },
+    "recommendations": [
+      {
+        "crop": "Wheat",
+        "suggestion": "Increase nitrogen fertilizer application by 10% to boost yield."
+      },
+      {
+        "crop": "Rice",
+        "suggestion": "Introduce more resistant varieties to mitigate bacterial blight."
+      },
+      {
+        "crop": "Maize",
+        "suggestion": "Implement integrated pest management practices to reduce infestation."
+      }
+    ]
+  }
+  
+  
+  

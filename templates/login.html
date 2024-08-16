@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white text-center">
+            <h2 class="mb-0 " >Login</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                {% if messages %}
+                    <ul class="messages bg-info">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <form method="POST" action="{% url 'login_url' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="uname" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="uname" name="uname" required>
+                </div>
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Enter Password</label>
+                    <input type="password" class="form-control" id="Password" name="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            Not a user? <a href="{% url 'register_url' %}">Register here</a>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    /* Existing Styles */
+    #heading {
+        background-color: #17252A !important;
+    }
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    .bg-light {
+        background-color: #3AAFA9 !important;
+    }
+    .btn-secondary {
+        background-color: #000000;
+        border-color: #6c757d;
+    }
+    .card {
+        background-color: #3AAFA9;
+    }
+    .card-header {
+        background-color: #17252A !important;
+        color: #FEFFFF !important;
+    }
+    .card-title {
+        color: #FEFFFF !important;
+    }
+    .scrollable-card {
+        max-height: 300px; /* Set a fixed height */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+    
+    /* New Styles */
+    .form-label {
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .form-control {
+        border-radius: 0.25rem;
+        border-color: #ccc;
+    }
+    .btn-primary {
+        background-color: #2B7A78;
+        border-color: #2B7A78;
+    }
+    .btn-primary:hover {
+        background-color: #1f6f6f;
+        border-color: #1f6f6f;
+    }
+</style>
+{% endblock %}
