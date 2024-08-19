@@ -95,7 +95,6 @@ class Aggridata(models.Model):
 
 
 # models.py
-from django.db import models
 
 class DataGenerationStatus(models.Model):
     district = models.CharField(max_length=255)
@@ -103,14 +102,5 @@ class DataGenerationStatus(models.Model):
     crop = models.CharField(max_length=255)
     status = models.CharField(max_length=50)  # E.g., 'in_progress', 'completed'
     timestamp = models.DateTimeField(auto_now_add=True)
-
-
-
-
-
-
-
-    
-
 
 

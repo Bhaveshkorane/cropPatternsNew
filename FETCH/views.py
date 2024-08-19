@@ -307,89 +307,7 @@ def subdistrict(request):
 #     return render(request, 'partials/village.html', context)
 
 
-# Api for generating random data 
-
-# class GenerateDataView(View):
-#     def post(self, request):
-
-#         try:
-#             start_time = time.time() #for testing 
-#             process_id = uuid.uuid4()
-#             added_time = str(datetime.now())
-            
-#             district = request.POST.get('district')
-            
-#             crop = request.POST.get('crop') 
-        
-#             district_name = District.objects.get(districtcode=district).englishname
-#             subdistricts = Subdistrict.objects.filter(district_id=district)
-#             for subd in subdistricts:
-#                 villages = Village.objects.filter(subdistrict_id=subd.subdistrictcode)
-#                 for vil in villages:
-#                     village_name = vil.englishname
-#                     village_code = vil.villagecode
-    
-#                     # Call the API
-#                     if crop == "All":
-#                         crop_names = Crop.objects.values_list('cropname', flat=True)
-#                         for cp in crop_names:
-#                             api_url = config('data_generator_api')
-
-                            
-
-#                             api_response = requests.get(api_url, data={'village': village_name, 'crop':cp,'village_code':village_code})
-#                             # Check if the request was successful
-#                             if api_response.status_code == 200:
-#                                 data = api_response.json().get('payload')
-                                
-#                             else:
-#                                 data = None
-#                             district = district 
-#                             dt = Cropdatajson(cropdata=data,
-#                                             added=district,
-#                                             district=district_name,
-#                                             process_id=process_id,
-#                                             added_time=added_time,
-#                                             crop_type=crop
-#                                             )
-
-#                             dt.save()       
-#                     else:
-#                         crop_name = Crop.objects.get(id=crop).cropname
-#                         api_url = config('data_generator_api')
-#                         api_response = requests.get(api_url, data={'village': village_name, 'crop':crop_name,'village_code':village_code})
-                        
-#                             # Check if the request was successful
-#                         if api_response.status_code == 200:
-#                             data = api_response.json().get('payload')
-#                         else:
-#                             data = None
-#                         district = district 
-#                         dt = Cropdatajson(cropdata=data,
-#                                         added=district,
-#                                         district=district_name,
-#                                         process_id=process_id,
-#                                         added_time=added_time,
-#                                         crop_type=crop_name
-#                                         )
-#                         dt.save()
-#             end_time = time.time()
-
-#             total_time=end_time-start_time
-                        
-#             messages.success(request, f"Total time taken for data generation = {total_time:.2f}")
-
-#             return redirect('/queue/')
-        
-#         except Exception as e:
-#             error_logger.error(f"errror occured in GenerateDataView --->{e}")
-#             messages.info(request,f" Exception occured {e}")
-#             return redirect('/queue/')
-
-
-#---------------------------------------------------------------------------------------------------------------------
 # For parallel processing 
-
 
 class GenerateDataView(View):
     def post(self, request):
@@ -397,6 +315,7 @@ class GenerateDataView(View):
             district = request.POST.get('district')
             crop = request.POST.get('crop')       
             generate_data_task.delay(district, crop)
+
             messages.success(request, "Data generation has been started in the background.")
             return redirect('/home/')
         except Exception as e:
@@ -589,7 +508,7 @@ def showhistory(request):
         return render(request, 'history.html')
     
 
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def gen_pdf(request, id):
     response = FileResponse(generate_pdf_file(id),
                             as_attachment=True,
@@ -597,6 +516,7 @@ def gen_pdf(request, id):
                             content_type='application/pdf')
     return response
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def generate_pdf_file(id):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
