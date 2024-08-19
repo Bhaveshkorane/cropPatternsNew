@@ -42,7 +42,22 @@
         </div>
     </div>
 </div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.btn-primary');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.setAttribute('disabled', 'true');
+                this.innerText = 'Extracting...';
+                this.style.backgroundColor = '#6c757d'; 
+                this.style.borderColor = '#6c757d'; 
+            });
+        });
+    });
+    </script>
+    
+    
 <style>
     #heading {
         background-color: #17252A !important;

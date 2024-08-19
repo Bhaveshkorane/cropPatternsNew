@@ -1,6 +1,6 @@
 from celery import shared_task
 import uuid
-from .models import Cropdatajson
+from .models import Cropdatajson, Cropdetails, State
 from .models import District
 from .models import Subdistrict
 from .models import Village
@@ -9,6 +9,11 @@ from .models import DataGenerationStatus
 from datetime import datetime
 import requests
 from decouple import config
+from .utils import aggirgatedata
+
+
+from django.contrib import messages
+from django.shortcuts import redirect
 
 
 # Importing loggers 
@@ -21,7 +26,6 @@ debug_logger = logging.getLogger('dubug_logger')
 
 @shared_task
 def generate_data_task(district, crop):
-    print(district,crop,"this is called generation----->")
     process_id = uuid.uuid4()
     added_time = datetime.now()
 
@@ -77,13 +81,10 @@ def generate_data_task(district, crop):
                         # Check if the request was successful
                     if api_response.status_code == 200:
                         data = api_response.json().get('payload')
-                        print("got the payload")
-                        error_logger.error(f"the data is genereatd with 200 code {data}")
                     else:
-                        print("didnt got the payload got the payload")
-                        error_logger.error(f"the data is genereatd with 200 code {data}")
-
+                        error_logger.error(f"the data is genereatd with {api_response.status_code} code and the data is:{data}")
                         data = None
+
                     district = district 
                     dt = Cropdatajson(cropdata=data,
                                     added=district,
@@ -105,3 +106,94 @@ def generate_data_task(district, crop):
         # Update task status to 'failed'
         DataGenerationStatus.objects.filter(process_id=process_id).update(status='failed')
         return False
+    
+@shared_task
+def save_json_task(id):
+    try:
+        jsondata = Cropdatajson.objects.filter(process_id=id).values()
+
+        for data in jsondata:
+            # For storing the corp data
+            unique_id = data['cropdata']['uniqueid']
+            crop_type = data['cropdata']['agricultural_data']['crop_type']
+            area_cultivated = data['cropdata']['agricultural_data']['area_cultivated']
+            yeild_perhectare = data['cropdata']['agricultural_data']['yeild_perhectare']
+            soil_type = data['cropdata']['agricultural_data']['soil_type']
+            irrigation_method = data['cropdata']['agricultural_data']['irrigation_method']
+            village = int(data['cropdata']['village_code'])
+
+
+
+            # Resloving Foreign keys 
+            village_=Village()
+            village_.villagecode=int(village)
+
+
+            vil=Village.objects.get(villagecode=int(village))
+
+            state_ =  State()
+            state_.statecode = vil.state_id
+
+            district_ = District()
+            district_.districtcode = vil.district_id
+
+            subdistrict_ = Subdistrict()
+            subdistrict_.subdistrictcode = vil.subdistrict_id
+            
+        
+            # For storing the weather data
+            temp_min = data['cropdata']['agricultural_data']['weather_data']['temprature']['max']
+            temp_max = data['cropdata']['agricultural_data']['weather_data']['temprature']['min']
+            temp_avg = data['cropdata']['agricultural_data']['weather_data']['temprature']['average']
+            rainfall_total = data['cropdata']['agricultural_data']['weather_data']['Rain_fall']['total_mm']
+            rainfall_rainy_days = data['cropdata']['agricultural_data']['weather_data']['Rain_fall']['rainy_days']
+            humidity = data['cropdata']['agricultural_data']['weather_data']['humidity']['average_percentage']
+
+
+            # For fertilizer data
+            npk = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['fertilizers'][0]['quantity_kg']
+            compost = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['fertilizers'][1]['quantity_kg']
+
+            # For Pesticides
+            quantity_l = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['pesticides'][0]['quantity_l']
+
+            
+            savecrop = Cropdetails(unique_id=unique_id,
+                            crop_type=crop_type,
+                            area_cultivated=area_cultivated,
+                            yeild_perhectare=yeild_perhectare,
+                            soil_type=soil_type,irrigation_method=irrigation_method,
+                            temp_avg=temp_avg,
+                            temp_max=temp_max,
+                            temp_min=temp_min,
+                            rainfall_rainy_days=rainfall_rainy_days,
+                            rainfall_total=rainfall_total,
+                            humidity=humidity,
+                            fertilizer_NPK_kg = npk,
+                            fertilizer_COMPOST_kg = compost,
+                            pesticide_type="Fungicide",
+                            pesticide_quantity_l=quantity_l,
+                            
+
+
+                            village=village_,
+                            district=district_,
+                            subdistrict=subdistrict_,
+                            state=state_
+                            )
+
+            # Adding data into Cropdetails                       
+            savecrop.save()
+
+
+        # Updtating the state added
+        jsondata = Cropdatajson.objects.filter(process_id=id).update(added=0)  
+
+        # Call to function for aggrigating the data
+        aggirgatedata()
+        return True
+
+    except Exception as e:
+        error_logger.error(f"errror occured in savejson --->{e}")    
+        return False
+
