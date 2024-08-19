@@ -27,7 +27,6 @@ class Subdistrict(models.Model):
     subdistrictupdated = models.DateTimeField(auto_now=True,blank=True,null=True)
     state = models.IntegerField(null=True,blank=True,default=0)                                                 
 
-from django.db import models
 
 class Village(models.Model):
     villagecode = models.IntegerField(primary_key=True, default=3)
