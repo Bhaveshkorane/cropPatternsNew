@@ -94,6 +94,17 @@ class Aggridata(models.Model):
     area_cultivated = models.IntegerField(null=True,blank=True)
 
 
+# models.py
+from django.db import models
+
+class DataGenerationStatus(models.Model):
+    district = models.CharField(max_length=255)
+    process_id = models.CharField(null=True, blank=True)
+    crop = models.CharField(max_length=255)
+    status = models.CharField(max_length=50)  # E.g., 'in_progress', 'completed'
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 
 
 

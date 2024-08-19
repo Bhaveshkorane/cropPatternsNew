@@ -25,9 +25,10 @@ from .views import showdistricttables
 from .views import showhistory
 from .views import gen_pdf
 from .views import GenerateDataView  
-
+from .views import DummyView
 # Downloading the pdf 
 
+from .views import in_progress_view
 
 
 # From utils 
@@ -65,7 +66,10 @@ urlpatterns = [
 
     path('queue/',queue,name='queue_url'),
     path('genpdf/<id>/',gen_pdf,name="genpdf_url"),
+    path('hello/', DummyView.as_view(), name="dummy_view") ,
 
-     
+    # For parallel processing 
+    path('in-progress/', in_progress_view, name='in_progress_view'),
+   
 ]
 

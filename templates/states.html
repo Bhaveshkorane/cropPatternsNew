@@ -44,8 +44,7 @@
                         <label for="crop-select" class="form-label">Crop</label>
                         <select class="form-select"
                                 name="crop"
-                                id="crop-select"
-                                >
+                                id="crop-select">
                             <option selected>All</option>
                             {% for i in crops %}
                             <option value="{{ i.id }}">{{ i.cropname }}</option>
@@ -62,20 +61,41 @@
 
     <div class="card-body bg-light mt-5">
         <div class="row">
-            <div class="col-md-4 mb-3 ">
+            <div class="col-md-4 mb-3">
                 <div class="card bg-info">
                     <div class="card-header bg-secondary text-white text-center">
                         <h3 class="mb-0">In Progress</h3>
                     </div>
                     <div class="card-body scrollable-card">
-                        <div class="mb-3 d-flex justify-content-center">
-                            
-                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Process ID</th>
+                                    <th>District</th>
+                                    <th>Crop</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in in_progress_tasks %}
+                                <tr>
+                                    <td>{{ task.process_id }}</td>
+                                    <td>{{ task.district }}</td>
+                                    <td>{{ task.crop }}</td>
+                                    <td>{{ task.status }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5">No tasks in progress</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4 mb-3 ">
+            <div class="col-md-4 mb-3">
                 <div class="card bg-info">
                     <div class="card-header bg-secondary text-white text-center">
                         <h3 class="mb-0">Extraction Queue</h3>
@@ -84,9 +104,9 @@
                         <table class="table">
                             <thead>
                               <tr>
-                                <th scope="col">sr no</th>
+                                <th scope="col">Sr No</th>
                                 <th scope="col">District</th>
-                                <th scope="col">crop </th>
+                                <th scope="col">Crop</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -98,16 +118,15 @@
                               </tr>
                             {% endfor %}
                             </tbody>
-                          </table>
+                        </table>
                         <div class="mb-3 d-flex justify-content-center">
-                                
                             <a href="{% url 'queue_url' %}" class="btn btn-secondary">Extract JSON</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4 mb-3 ">
+            <div class="col-md-4 mb-3">
                 <div class="card bg-info">
                     <div class="card-header bg-secondary text-white text-center">
                         <h3 class="mb-0">Available for View</h3>

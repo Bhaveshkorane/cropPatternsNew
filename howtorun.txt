@@ -1,0 +1,7 @@
+1.Activate the environment
+
+2. start the server 
+python manage.py runserver
+
+3. in second terminal with same environment  for startning the worker
+celery -A cropPatterns worker --loglevel=info 

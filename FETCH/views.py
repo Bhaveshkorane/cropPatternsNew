@@ -264,8 +264,8 @@ def state(request):
         crops =Crop.objects.all().order_by('cropname')
         jsondata = Cropdatajson.objects.order_by('process_id').distinct('process_id').exclude(added=0)
         data = Aggridata.objects.distinct('district')
-        
-        context = {'states': states,'crops':crops,'notupdated':jsondata,"data":data}
+        in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')      
+        context = {'states': states,'crops':crops,'notupdated':jsondata,"data":data,'in_progress_tasks': in_progress_tasks}
         return render(request, 'states.html', context)
     except Exception as e:
             error_logger.error(f"errror occured state --->{e}")
@@ -306,84 +306,133 @@ def subdistrict(request):
 
 # Api for generating random data 
 
-class GenerateDataView(View):
-    def post(self, request):
+# class GenerateDataView(View):
+#     def post(self, request):
 
-        try:
-            start_time = time.time() #for testing 
-            process_id = uuid.uuid4()
-            added_time = str(datetime.now())
+#         try:
+#             start_time = time.time() #for testing 
+#             process_id = uuid.uuid4()
+#             added_time = str(datetime.now())
             
-            district = request.POST.get('district')
+#             district = request.POST.get('district')
             
-            crop = request.POST.get('crop') 
+#             crop = request.POST.get('crop') 
         
-            district_name = District.objects.get(districtcode=district).englishname
-            subdistricts = Subdistrict.objects.filter(district_id=district)
-            for subd in subdistricts:
-                villages = Village.objects.filter(subdistrict_id=subd.subdistrictcode)
-                for vil in villages:
-                    village_name = vil.englishname
-                    village_code = vil.villagecode
+#             district_name = District.objects.get(districtcode=district).englishname
+#             subdistricts = Subdistrict.objects.filter(district_id=district)
+#             for subd in subdistricts:
+#                 villages = Village.objects.filter(subdistrict_id=subd.subdistrictcode)
+#                 for vil in villages:
+#                     village_name = vil.englishname
+#                     village_code = vil.villagecode
     
-                    # Call the API
-                    if crop == "All":
-                        crop_names = Crop.objects.values_list('cropname', flat=True)
-                        for cp in crop_names:
-                            api_url = config('data_generator_api')
+#                     # Call the API
+#                     if crop == "All":
+#                         crop_names = Crop.objects.values_list('cropname', flat=True)
+#                         for cp in crop_names:
+#                             api_url = config('data_generator_api')
 
                             
 
-                            api_response = requests.get(api_url, data={'village': village_name, 'crop':cp,'village_code':village_code})
-                            # Check if the request was successful
-                            if api_response.status_code == 200:
-                                data = api_response.json().get('payload')
+#                             api_response = requests.get(api_url, data={'village': village_name, 'crop':cp,'village_code':village_code})
+#                             # Check if the request was successful
+#                             if api_response.status_code == 200:
+#                                 data = api_response.json().get('payload')
                                 
-                            else:
-                                data = None
-                            district = district 
-                            dt = Cropdatajson(cropdata=data,
-                                            added=district,
-                                            district=district_name,
-                                            process_id=process_id,
-                                            added_time=added_time,
-                                            crop_type=crop
-                                            )
+#                             else:
+#                                 data = None
+#                             district = district 
+#                             dt = Cropdatajson(cropdata=data,
+#                                             added=district,
+#                                             district=district_name,
+#                                             process_id=process_id,
+#                                             added_time=added_time,
+#                                             crop_type=crop
+#                                             )
 
-                            dt.save()       
-                    else:
-                        crop_name = Crop.objects.get(id=crop).cropname
-                        api_url = config('data_generator_api')
-                        api_response = requests.get(api_url, data={'village': village_name, 'crop':crop_name,'village_code':village_code})
-                            # Check if the request was successful
-                        if api_response.status_code == 200:
-                            data = api_response.json().get('payload')
-                        else:
-                            data = None
-                        district = district 
-                        dt = Cropdatajson(cropdata=data,
-                                        added=district,
-                                        district=district_name,
-                                        process_id=process_id,
-                                        added_time=added_time,
-                                        crop_type=crop_name
-                                        )
-                        dt.save()
-            end_time = time.time()
-
-            total_time=end_time-start_time
+#                             dt.save()       
+#                     else:
+#                         crop_name = Crop.objects.get(id=crop).cropname
+#                         api_url = config('data_generator_api')
+#                         api_response = requests.get(api_url, data={'village': village_name, 'crop':crop_name,'village_code':village_code})
                         
-            messages.success(request, f"Total time taken for data generation = {total_time:.2f}")
+#                             # Check if the request was successful
+#                         if api_response.status_code == 200:
+#                             data = api_response.json().get('payload')
+#                         else:
+#                             data = None
+#                         district = district 
+#                         dt = Cropdatajson(cropdata=data,
+#                                         added=district,
+#                                         district=district_name,
+#                                         process_id=process_id,
+#                                         added_time=added_time,
+#                                         crop_type=crop_name
+#                                         )
+#                         dt.save()
+#             end_time = time.time()
 
-            return redirect('/queue/')
-        except Exception as e:
-            error_logger.error(f"errror occured in GenerateDataView --->{e}")
-            messages.info(request,f" Exception occured {e}")
-            return redirect('/queue/')
+#             total_time=end_time-start_time
+                        
+#             messages.success(request, f"Total time taken for data generation = {total_time:.2f}")
 
+#             return redirect('/queue/')
         
+#         except Exception as e:
+#             error_logger.error(f"errror occured in GenerateDataView --->{e}")
+#             messages.info(request,f" Exception occured {e}")
+#             return redirect('/queue/')
 
-    
+class DummyView(View):
+    def get(self, request):
+        response_data = {
+            "status":"success",
+            "Message":"Hello There"
+        }
+        print(f"response_data {response_data}")
+        # return Response(response_data, 202)
+        return render(request,'states.html')
+        
+#---------------------------------------------------------------------------------------------------------------------
+# views.py
+from .tasks import generate_data_task
+from django.views import View
+from django.shortcuts import redirect
+from django.contrib import messages
+
+class GenerateDataView(View):
+    def post(self, request):
+        try:
+            district = request.POST.get('district')
+            crop = request.POST.get('crop') 
+            
+            generate_data_task.delay(district, crop)
+
+
+            messages.success(request, "Data generation has been started in the background.")
+            return redirect('/home/')
+        except Exception as e:
+            error_logger.error(f"Error in GenerateDataView: {e}")
+            messages.info(request, f"Exception occurred: {e}")
+            return redirect('/home/')
+
+
+from django.shortcuts import render
+from .models import DataGenerationStatus
+
+@login_required(login_url="/login/")
+def in_progress_view(request):
+    try:
+        in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')
+        context = {'in_progress_tasks': in_progress_tasks}
+        return render(request, 'states.html', context)
+    except Exception as e:
+        error_logger.error(f"Error occurred in in_progress_view --->{e}")
+        messages.info(request, f"Exception occurred: {e}")
+        return render(request, 'states.html')
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------------------
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def savejson(request,id):
     try:
