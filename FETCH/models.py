@@ -46,12 +46,11 @@ class Crop(models.Model):
 
 class Cropdatajson(models.Model):
     cropdata = models.JSONField(null=True, blank=True, default=None)
-    added = models.IntegerField(null=True, blank=True, default=0)
-    district = models.CharField(null=True, blank=True, default=None)
-    process_id = models.CharField(null=True, blank=True)
-    added_time = models.CharField(null=True, blank=True)
-    crop_type = models.CharField(null=True, blank=True)
-
+    district = models.CharField(max_length=255, null=True, blank=True, default=None)
+    state = models.CharField(max_length=255, null=True, blank=True, default=None)
+    process_id = models.CharField(max_length=255, null=True, blank=True)
+    added_time = models.CharField(max_length=255, null=True, blank=True)
+    crop_type = models.CharField(max_length=255, null=True, blank=True)
 
 class Cropdetails(models.Model):
     
@@ -93,13 +92,17 @@ class Aggridata(models.Model):
     area_cultivated = models.IntegerField(null=True,blank=True)
 
 
-# models.py
 
-class DataGenerationStatus(models.Model):
-    district = models.CharField(max_length=255)
+class Process_status(models.Model):
+    district = models.CharField(max_length=255,null=True,blank=True)
+    state = models.CharField(max_length=255,null=True,blank=True)
     process_id = models.CharField(null=True, blank=True)
     crop = models.CharField(max_length=255)
-    status = models.CharField(max_length=50)  # E.g., 'in_progress', 'completed'
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    is_generation = models.BooleanField(default=False)
+    is_extraction = models.BooleanField(default=False)
+    is_aggregation = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
 
-
+    is_failed = models.BooleanField(default=False)

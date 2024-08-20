@@ -55,39 +55,60 @@
             </form>
         </div>
     </div>
+    
 
-    <div class="card-body bg-light mt-5 scrollable-card">
-                    <div class="card-header bg-secondary text-white text-center">
-                        <h3 class="mb-0">Summary</h3>
-                    </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Process ID</th>
-                                    <th>District</th>
-                                    <th>Crop</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for task in in_progress_tasks %}
-                                <tr>
-                                    <td>{{ task.process_id }}</td>
-                                    <td>{{ task.district }}</td>
-                                    <td>{{ task.crop }}</td>
-                                    <td>{{ task.status }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5">No tasks in progress</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-        </div>
+<div class="card-shadow bg-light mt-5 scrollable-card rounded">
+    <div class="card-header bg-secondary text-white text-center">
+        <h3 class="mb-0">Running processes</h3>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>State</th>
+                <th>District</th>
+                <th>Crop</th>
+                <th>Generation</th>
+                <th>Extraction</th>
+                <th>Aggregation</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in process_status %}
+            <tr>
+                <td>{{ i.state }}</td>
+                <td>{{ i.district }}</td>
+                <td>{{ i.crop }}</td>
+                <td class="{% if i.is_generation %}bg-success{% else %}bg-danger{% endif %}">
+                             {% if i.is_generation %}Completed{% else %}Running{% endif %}
+                </td>
+                <td class=" {% if i.is_extraction %}bg-success{% else %}bg-danger{% endif %}">
+                             {% if i.is_extraction %}Completed{% else %}Running{% endif %}
+                </td>
+                <td class="{% if i.is_aggregation %}bg-success{% else %}bg-danger{% endif %}" >
+                             {% if i.is_aggregation %}Completed{% else %}Running {% endif %}
+
+                </td>
+                <td class=" {% if i.is_failed %}bg-danger{% else %}bg-warning{% endif %}">        
+                             {% if i.is_failed %}Failed{% else %}Pending{% endif %}
+                </td>
+            </tr>
+            
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 </div>
 
 <style>
+    .scrollable-card table {
+        width: 100%;
+        border-collapse: collapse; /* Optional: Ensures borders do not collapse */
+    }
+    .scrollable-card th, .scrollable-card td {
+        padding: 8px; /* Optional: Adds padding inside table cells */
+        border: 1px solid #ddd; /* Optional: Adds borders to table cells */
+    }
     #heading {
         background-color: #17252A !important;
     }
@@ -103,7 +124,7 @@
         border-color: #6c757d;
     }
     .card {
-        background-color:  #3AAFA9;
+        background-color: #3AAFA9;
     }
     .card-header {
         background-color: #17252A !important;
@@ -113,7 +134,7 @@
         color: #FEFFFF !important;
     }
     .scrollable-card {
-        max-height: 300px; /* Set a fixed height */
+        max-height: 550px; /* Set a fixed height */
         overflow-y: auto; /* Enable vertical scrolling */
     }
 </style>

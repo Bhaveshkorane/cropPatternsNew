@@ -20,7 +20,6 @@ from .views import subdistrict
 # from .views import crops
 from .views import savejson
 from .views import viewdata
-from .views import queue
 from .views import showdistricttables
 from .views import showhistory
 from .views import gen_pdf
@@ -63,7 +62,6 @@ urlpatterns = [
     path('showhistory/',showhistory,name='history_url'),
 
 
-    path('queue/',queue,name='queue_url'),
     path('genpdf/<id>/',gen_pdf,name="genpdf_url"),
 
     # For parallel processing 

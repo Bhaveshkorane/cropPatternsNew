@@ -21,18 +21,28 @@
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">sr no</th>
+                        <th scope="col">state</th>
                         <th scope="col">District</th>
                         <th scope="col">crop </th>
                         <th scope="col">Added time </th>
+                        <th scope="col">status</th>
+
+
+                        
                     </tr>
                 </thead>
                 <tbody>
                     {% for data in history %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ data.state }}</td>
                         <td>{{ data.district }}</td>
-                        <td>{{ data.crop_type}}</td>
-                        <td>{{ data.added_time }}</td>
+                        <td>{{ data.crop}}</td>
+                        <td>{{ data.timestamp }}</td>
+                        <td class=" {% if data.is_failed %}bg-danger{% else %}bg-success{% endif %}">        
+                            {% if data.is_failed %}Failed{% else %}Success{% endif %}
+                        </td>
+
                     </tr>
                     {% endfor %}
                 </tbody>

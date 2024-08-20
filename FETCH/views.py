@@ -15,7 +15,7 @@ from .models import Crop
 from .models import Cropdatajson
 from .models import Cropdetails
 from .models import Aggridata   
-
+from .models import Process_status
 
 # uuid for generting the unique id 
 import uuid 
@@ -265,10 +265,10 @@ def state(request):
     try:
         states = State.objects.all()
         crops =Crop.objects.all().order_by('cropname')
-        jsondata = Cropdatajson.objects.order_by('process_id').distinct('process_id').exclude(added=0)
-        data = Aggridata.objects.distinct('district')
-        in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')      
-        context = {'states': states,'crops':crops,'notupdated':jsondata,"data":data,'in_progress_tasks': in_progress_tasks}
+        process_status = Process_status.objects.all().exclude(is_completed=True) 
+        # process_status = Process_status.objects.all()   
+           
+        context = {'states': states,'crops':crops,"process_status":process_status}
         return render(request, 'states.html', context)
     except Exception as e:
             error_logger.error(f"errror occured state --->{e}")
@@ -309,12 +309,38 @@ def subdistrict(request):
 
 # For parallel processing 
 
+# class GenerateDataView(View):
+#     def post(self, request):
+#         try:
+#             district = request.POST.get('district')
+#             crop = request.POST.get('crop')
+#             process_id = uuid.uuid4()       
+#             generate_data_task.delay(district, crop,process_id)
+#             save_json_task.delay(process_id)
+
+#             messages.success(request, "Data generation has been started in the background.")
+#             return redirect('/home/')
+#         except Exception as e:
+#             error_logger.error(f"Error in GenerateDataView: {e}")
+#             messages.info(request, f"Exception occurred: {e}")
+#             return redirect('/home/')
+
+from celery import chain
+
 class GenerateDataView(View):
     def post(self, request):
         try:
             district = request.POST.get('district')
-            crop = request.POST.get('crop')       
-            generate_data_task.delay(district, crop)
+            crop = request.POST.get('crop')
+            process_id = uuid.uuid4()       
+
+            # Chain the tasks to ensure save_json_task runs after generate_data_task completes
+            task_chain = chain(
+                generate_data_task.s(district, crop, process_id),
+                save_json_task.s(process_id)
+            )
+
+            task_chain.apply_async()
 
             messages.success(request, "Data generation has been started in the background.")
             return redirect('/home/')
@@ -324,19 +350,21 @@ class GenerateDataView(View):
             return redirect('/home/')
 
 
+
 from django.shortcuts import render
-from .models import DataGenerationStatus
+# from .models import DataGenerationStatus
 
 @login_required(login_url="/login/")
 def in_progress_view(request):
-    try:
-        in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')
-        context = {'in_progress_tasks': in_progress_tasks}
-        return render(request, 'states.html', context)
-    except Exception as e:
-        error_logger.error(f"Error occurred in in_progress_view --->{e}")
-        messages.info(request, f"Exception occurred: {e}")
-        return render(request, 'states.html')
+    # try:
+    #     in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')
+    #     context = {'in_progress_tasks': in_progress_tasks}
+    #     return render(request, 'states.html', context)
+    # except Exception as e:
+    #     error_logger.error(f"Error occurred in in_progress_view --->{e}")
+    #     messages.info(request, f"Exception occurred: {e}")
+    #     return render(request, 'states.html')
+    return HttpResponse(request,"hello bhavesh")
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def savejson(request,id):
@@ -344,106 +372,13 @@ def savejson(request,id):
         save_json_task.delay(id)
            
         messages.info(request,"The data is beign extracted")
-        return redirect('/queue/')
+        return redirect('/home/')
         
     except Exception as e:
         error_logger.error(f"there is error in the savejson {e}")
         messages.info(request,f"There was error{e}")
-        return redirect('/queue/')
+        return redirect('/home/')
 
-#----------------------------------------------------------------------------------------------------------------------------------------------------------
-# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-# def savejson(request,id):
-#     try:
-#         jsondata = Cropdatajson.objects.filter(process_id=id).values()
-
-#         for data in jsondata:
-#             # For storing the corp data
-#             unique_id = data['cropdata']['uniqueid']
-#             crop_type = data['cropdata']['agricultural_data']['crop_type']
-#             area_cultivated = data['cropdata']['agricultural_data']['area_cultivated']
-#             yeild_perhectare = data['cropdata']['agricultural_data']['yeild_perhectare']
-#             soil_type = data['cropdata']['agricultural_data']['soil_type']
-#             irrigation_method = data['cropdata']['agricultural_data']['irrigation_method']
-#             village = int(data['cropdata']['village_code'])
-
-
-
-#             # Resloving Foreign keys 
-#             village_=Village()
-#             village_.villagecode=int(village)
-
-
-#             vil=Village.objects.get(villagecode=int(village))
-
-#             state_ =  State()
-#             state_.statecode = vil.state_id
-
-#             district_ = District()
-#             district_.districtcode = vil.district_id
-
-#             subdistrict_ = Subdistrict()
-#             subdistrict_.subdistrictcode = vil.subdistrict_id
-            
-        
-#             # For storing the weather data
-#             temp_min = data['cropdata']['agricultural_data']['weather_data']['temprature']['max']
-#             temp_max = data['cropdata']['agricultural_data']['weather_data']['temprature']['min']
-#             temp_avg = data['cropdata']['agricultural_data']['weather_data']['temprature']['average']
-#             rainfall_total = data['cropdata']['agricultural_data']['weather_data']['Rain_fall']['total_mm']
-#             rainfall_rainy_days = data['cropdata']['agricultural_data']['weather_data']['Rain_fall']['rainy_days']
-#             humidity = data['cropdata']['agricultural_data']['weather_data']['humidity']['average_percentage']
-
-
-#             # For fertilizer data
-#             npk = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['fertilizers'][0]['quantity_kg']
-#             compost = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['fertilizers'][1]['quantity_kg']
-
-#             # For Pesticides
-#             quantity_l = data['cropdata']['agricultural_data']['pesticide_and_fertilizer_usage']['pesticides'][0]['quantity_l']
-
-            
-#             savecrop = Cropdetails(unique_id=unique_id,
-#                             crop_type=crop_type,
-#                             area_cultivated=area_cultivated,
-#                             yeild_perhectare=yeild_perhectare,
-#                             soil_type=soil_type,irrigation_method=irrigation_method,
-#                             temp_avg=temp_avg,
-#                             temp_max=temp_max,
-#                             temp_min=temp_min,
-#                             rainfall_rainy_days=rainfall_rainy_days,
-#                             rainfall_total=rainfall_total,
-#                             humidity=humidity,
-#                             fertilizer_NPK_kg = npk,
-#                             fertilizer_COMPOST_kg = compost,
-#                             pesticide_type="Fungicide",
-#                             pesticide_quantity_l=quantity_l,
-                            
-
-
-#                             village=village_,
-#                             district=district_,
-#                             subdistrict=subdistrict_,
-#                             state=state_
-#                             )
-
-#             # Adding data into Cropdetails                       
-#             savecrop.save()
-
-#         messages.success(request,"Crop Details saved successfully ")  
-
-#         # Updtating the state added
-#         jsondata = Cropdatajson.objects.filter(process_id=id).update(added=0)  
-
-#         # Call to function for aggrigating the data
-#         aggirgatedata()
-
-#         return redirect('/queue/')
-#         return HttpResponse("the data you have fetched successfully ")
-#     except Exception as e:
-#         error_logger.error(f"errror occured in savejson --->{e}")
-#         messages.info(request,f" Exception occured {e}")
-#         return redirect('/queue/')
 
         
 
@@ -464,23 +399,6 @@ def viewdata(request):
         return render(request, 'data.html')
 
         
-    
-
-# Queue avaliable for extraction 
-
-@login_required(login_url="/login/")
-def queue(request):
-    try:
-        jsondata = Cropdatajson.objects.order_by('process_id').distinct('process_id').exclude(added=0)
-        context = {'notupdated':jsondata,}
-        return render(request,'quedjson.html',context)
-    except Exception as e:
-        error_logger.error(f"errror occured in queue --->{e}")
-        messages.info(request,f" Exception occured {e}")
-        return render(request, 'quedjson.html')
-    
-#working view 
-
 @login_required(login_url="/login/")
 def showdistricttables(request,id):
     try:
@@ -495,11 +413,11 @@ def showdistricttables(request,id):
         messages.info(request,f" Exception occured {e}")
         return render(request, 'distdata.html')
 
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url="/login/")
 def showhistory(request):
     try:
-        jsondata = Cropdatajson.objects.order_by('process_id').distinct('process_id')
+        jsondata = Process_status.objects.all()
         context = {'history':jsondata}
         return render(request,'history.html',context)
     except Exception as e:
@@ -516,20 +434,19 @@ def gen_pdf(request, id):
                             content_type='application/pdf')
     return response
 
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def generate_pdf_file(id):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     elements = []
 
-    # Fetch data
+    # For fetchching the data for pdf 
     data = Aggridata.objects.filter(district=id)
   
-    # Title and Header
+    # For Title and the header 
     title = Paragraph(f"State:{data[0].state} district:{data[0].district} ")
     elements.append(title)
 
-    # Table Data
+    # For table data
     table_data = [['Sr. No', 'Crop', 'Total Area Under Cultivation (ha)']]
     for i, dt in enumerate(data, start=1):
         table_data.append([i, dt.crop, dt.area_cultivated])
@@ -537,7 +454,7 @@ def generate_pdf_file(id):
     table = Table(table_data)
     elements.append(table)
 
-    # Build the PDF
+    # For building the pdf 
     doc.build(elements)
 
     buffer.seek(0)

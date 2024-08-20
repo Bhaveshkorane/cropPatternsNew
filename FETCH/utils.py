@@ -2,19 +2,13 @@ import random
 from rest_framework.response import Response 
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-import requests
-from django.shortcuts import HttpResponse
 from rest_framework.response import Response 
 from django.views import View
 
 
 # Importing models 
 from .models import State
-from .models import Subdistrict
-from .models import Village
 from .models import District
-from .models import Crop
-from .models import Cropdatajson
 from .models import Cropdetails
 from .models import Aggridata   
 
@@ -142,6 +136,7 @@ def aggirgatedata():
                 crop=data['crop_type'],
                 defaults={'area_cultivated': data['total_area']}
             )
+        
     except Exception as e:
         logger.error(f"errror occured in aggirgatedata--->{e}")
 

@@ -5,7 +5,7 @@ from .models import District
 from .models import Subdistrict
 from .models import Village
 from .models import Crop
-from .models import DataGenerationStatus
+from .models import Process_status
 from datetime import datetime
 import requests
 from decouple import config
@@ -25,23 +25,30 @@ debug_logger = logging.getLogger('dubug_logger')
 
 
 @shared_task
-def generate_data_task(district, crop):
-    process_id = uuid.uuid4()
+def generate_data_task(district, crop,process_id):
+    
     added_time = datetime.now()
 
     try:
-        # Start task and set status to 'in_progress'
-        gendata = DataGenerationStatus(
-            process_id=process_id,
-            district=district,
-            crop=crop,
-            status='in_progress',
-            timestamp=added_time
-        )
-        gendata.save()
-
         district_name = District.objects.get(districtcode=district).englishname
         subdistricts = Subdistrict.objects.filter(district_id=district)
+
+        # Fetch the district object
+        district_obj = District.objects.select_related('state').get(districtcode=district)
+
+        # Extract the district name and state name
+        district_name = district_obj.englishname
+        state_name = district_obj.state.englishname
+
+        gendata = Process_status(
+            process_id=process_id,
+            district=district_name,
+            crop=crop,
+            timestamp=added_time,
+            state=state_name
+        )
+        gendata.save()
+        
 
         for subd in subdistricts:
             villages = Village.objects.filter(subdistrict_id=subd.subdistrictcode)
@@ -55,25 +62,23 @@ def generate_data_task(district, crop):
                     for cp in crop_names:
                         api_url = config('data_generator_api')
 
-                        
-
                         api_response = requests.get(api_url, data={'village': village_name, 'crop':cp,'village_code':village_code})
                         # Check if the request was successful
                         if api_response.status_code == 200:
-                            data = api_response.json().get('payload')
-                            
+                            data = api_response.json().get('payload')     
                         else:
                             data = None
                         district = district 
-                        dt = Cropdatajson(cropdata=data,
-                                        added=district,
-                                        district=district_name,
-                                        process_id=process_id,
-                                        added_time=added_time,
-                                        crop_type=crop
-                                        )
-
-                        dt.save()       
+                        dt = Cropdatajson(
+                            cropdata=data,
+                            district=district_name,
+                            state=state_name,
+                            process_id=str(process_id),
+                            added_time=str(added_time),
+                            crop_type=cp
+                        )
+                        dt.save() 
+     
                 else:
                     crop_name = Crop.objects.get(id=crop).cropname
                     api_url = config('data_generator_api')
@@ -86,17 +91,21 @@ def generate_data_task(district, crop):
                         data = None
 
                     district = district 
-                    dt = Cropdatajson(cropdata=data,
-                                    added=district,
-                                district=district_name,
-                                process_id=process_id,
-                                added_time=added_time,
-                                crop_type=crop_name
-                                )
-                dt.save()
+                    dt = Cropdatajson(
+                        cropdata=data,
+                        district=district_name,
+                        state=state_name,
+                        process_id=str(process_id),
+                        added_time=str(added_time),
+                        crop_type=crop_name                    )
+                    Process_status.objects.filter(process_id=process_id).update(crop=crop_name)
+                    dt.save()
+                  
+                
 
-        # Update task status to 'completed'
-        DataGenerationStatus.objects.filter(process_id=process_id).update(status='completed')
+        # Update task status to generation
+        Process_status.objects.filter(process_id=process_id).update(is_generation=True)
+
         return True
 
     except Exception as e:
@@ -104,11 +113,11 @@ def generate_data_task(district, crop):
         logging.error(f"Error in generate_data_task: {e}", exc_info=True)
         
         # Update task status to 'failed'
-        DataGenerationStatus.objects.filter(process_id=process_id).update(status='failed')
+        Process_status.objects.filter(process_id=process_id).update(is_failed=True)
         return False
     
 @shared_task
-def save_json_task(id):
+def save_json_task(_,id):
     try:
         jsondata = Cropdatajson.objects.filter(process_id=id).values()
 
@@ -184,16 +193,22 @@ def save_json_task(id):
 
             # Adding data into Cropdetails                       
             savecrop.save()
+            Process_status.objects.filter(process_id=id).update(is_extraction=True)
 
-
-        # Updtating the state added
-        jsondata = Cropdatajson.objects.filter(process_id=id).update(added=0)  
 
         # Call to function for aggrigating the data
+
         aggirgatedata()
+        Process_status.objects.filter(process_id=id).update(is_aggregation=True)
+        Process_status.objects.filter(process_id=id).update(is_completed=True)
+
+        
+
         return True
 
     except Exception as e:
-        error_logger.error(f"errror occured in savejson --->{e}")    
+        error_logger.error(f"errror occured in savejson --->{e}")
+        Process_status.objects.filter(process_id=id).update(is_failed=True)
+
         return False
 
