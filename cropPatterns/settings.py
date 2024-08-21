@@ -172,7 +172,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "loggers": {
-        "django": {
+        "error_logger": {
             "handlers": ['errors'],
             "level": "ERROR",
         },

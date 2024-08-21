@@ -50,7 +50,7 @@ import logging
 generation_logger = logging.getLogger('generation_logger')
 extraction_logger = logging.getLogger('extraction_logger')
 aggregation_logger = logging.getLogger('aggregation_logger')
-error_logger = logging.getLogger('django')
+error_logger = logging.getLogger('error_logger')
 
 # For downloading pdf file 
 from io import BytesIO
@@ -358,13 +358,10 @@ def savejson(request,id):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url="/login/")
 def viewdata(request):
-    logger1 = logging.getLogger('info')
     try:
-        data = Aggridata.objects.distinct('district')
+        data = Aggridata.objects.all().distinct('district')
 
         context = {"data":data}
-        logger1.info(f"you viewed the data------------------------------------------------------------>")
-
         return render(request, 'data.html', context)
     except Exception as e:
         error_logger.error(f"errror occured in viewdata--->{e}")
@@ -390,7 +387,7 @@ def showdistricttables(request,id):
 @login_required(login_url="/login/")
 def showhistory(request):
     try:
-        jsondata = Process_status.objects.all()
+        jsondata = Process_status.objects.all().order_by('timestamp')
         context = {'history':jsondata}
         return render(request,'history.html',context)
     except Exception as e:
