@@ -401,11 +401,14 @@ def showhistory(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def gen_pdf(request, id):
-    response = FileResponse(generate_pdf_file(id),
-                            as_attachment=True,
-                            filename='Data.pdf',
-                            content_type='application/pdf')
-    return response
+    try:
+        response = FileResponse(generate_pdf_file(id),
+                                as_attachment=True,
+                                filename='Data.pdf',
+                                content_type='application/pdf')
+        return response
+    except Exception as e:
+        error_logger.error(f"error occured in gen_pdf--->{e}")
 
 def generate_pdf_file(id):
     try:
@@ -434,5 +437,6 @@ def generate_pdf_file(id):
 
         buffer.seek(0)
         return buffer
+    
     except Exception as e:
         error_logger.error(f"Error occoured in pdf generate_pdf_file function---->{e}")
