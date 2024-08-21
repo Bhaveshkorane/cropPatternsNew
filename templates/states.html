@@ -70,7 +70,6 @@
                 <th>Generation</th>
                 <th>Extraction</th>
                 <th>Aggregation</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -83,14 +82,11 @@
                              {% if i.is_generation %}Completed{% else %}Running{% endif %}
                 </td>
                 <td class=" {% if i.is_extraction %}bg-success{% else %}bg-danger{% endif %}">
-                             {% if i.is_extraction %}Completed{% else %}Running{% endif %}
+                             {% if i.is_extraction %}Completed{% else %}Not started{% endif %}
                 </td>
                 <td class="{% if i.is_aggregation %}bg-success{% else %}bg-danger{% endif %}" >
-                             {% if i.is_aggregation %}Completed{% else %}Running {% endif %}
+                             {% if i.is_aggregation %}Completed{% else %}Not started{% endif %}
 
-                </td>
-                <td class=" {% if i.is_failed %}bg-danger{% else %}bg-warning{% endif %}">        
-                             {% if i.is_failed %}Failed{% else %}Pending{% endif %}
                 </td>
             </tr>
             

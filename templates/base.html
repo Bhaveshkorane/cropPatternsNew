@@ -10,6 +10,8 @@
         body {
             background: #2B7A78;
         }
+    
+        /* Navbar Styles */
         #navbar {
             background-color: #17252A!important;
         }
@@ -20,10 +22,72 @@
         #navbar .navbar-nav .nav-link:hover {
             color: #D4A5A5!important; /* Light pink color on hover */
         }
-        #heading {
-            background-color: hsl(196, 86%, 11%) !important;
+    
+        /* Heading Styles */
+        #heading, #header {
+            background-color: #17252A !important;
+            color: #FEFFFF !important;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+    
+        /* Button Styles */
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-secondary {
+            background-color: #000000;
+            border-color: #6c757d;
+        }
+        .btn-primary {
+            background-color: #2B7A78;
+            border-color: #2B7A78;
+        }
+        .btn-primary:hover {
+            background-color: #1f6f6f;
+            border-color: #1f6f6f;
+        }
+    
+        /* Background Styles */
+        .bg-light {
+            background-color: #3AAFA9 !important;
+        }
+    
+        /* Card Styles */
+        .card {
+            background-color: #3AAFA9;
+        }
+        .card-header {
+            background-color: #17252A !important;
+            color: #FEFFFF !important;
+        }
+        .card-title {
+            color: #FEFFFF !important;
+        }
+        .card-body {
+            max-height: 750px;
+            overflow-y: auto;
+        }
+    
+        /* Scrollable Card Styles */
+        .scrollable-card {
+            max-height: 300px; /* Set a fixed height */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+    
+        /* Form Styles */
+        .form-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .form-control {
+            border-radius: 0.25rem;
+            border-color: #ccc;
         }
     </style>
+    
 </head>
 <body>
     <div id="navbar">
