@@ -18,10 +18,9 @@ from django.shortcuts import redirect
 
 # Importing loggers 
 import logging
-error_logger = logging.getLogger('error_logger')
-info_logger = logging.getLogger('django')
-warning_logger = logging.getLogger('warning_logger')
-debug_logger = logging.getLogger('dubug_logger')
+generation_logger = logging.getLogger('generation_logger')
+extraction_logger = logging.getLogger('extraction_logger')
+aggregation_logger = logging.getLogger('aggregation_logger')
 
 
 @shared_task
@@ -87,7 +86,7 @@ def generate_data_task(district, crop,process_id):
                     if api_response.status_code == 200:
                         data = api_response.json().get('payload')
                     else:
-                        error_logger.error(f"the data is genereatd with {api_response.status_code} code and the data is:{data}")
+                        generation_logger.error(f"the data is genereatd with {api_response.status_code} code and the data is:{data}")
                         data = None
 
                     district = district 
@@ -110,7 +109,7 @@ def generate_data_task(district, crop,process_id):
 
     except Exception as e:
         # Log the exception details
-        logging.error(f"Error in generate_data_task: {e}", exc_info=True)
+        generation_logger.error(f"Error in generate_data_task: {e}", exc_info=True)
         
         # Update task status to 'failed'
         Process_status.objects.filter(process_id=process_id).update(is_failed=True)
@@ -207,7 +206,7 @@ def save_json_task(_,id):
         return True
 
     except Exception as e:
-        error_logger.error(f"errror occured in savejson --->{e}")
+        extraction_logger.error(f"errror occured in savejson --->{e}")
         Process_status.objects.filter(process_id=id).update(is_failed=True)
 
         return False

@@ -173,45 +173,45 @@ LOGGING = {
     "disable_existing_loggers": False,
     "loggers": {
         "django": {
-            "handlers": ['info'],
-            "level": "INFO",  
-    },
-        "error_logger": {
-            "handlers": ['error'],
-            "level": "ERROR",  
-    },
-        "warning_logger": {
-            "handlers": ['warning'],
-            "level": "WARNING",  
-    },
-        "debug_logger": {
-            "handlers": ['debug'],
-            "level": "DEBUG",  
-    }
+            "handlers": ['errors'],
+            "level": "ERROR",
+        },
+        "generation_logger": {
+            "handlers": ['generation'],
+            "level": "INFO",
+        },
+        "extraction_logger": {
+            "handlers": ['extraction'],
+            "level": "INFO",
+        },
+        "aggregation_logger": {
+            "handlers": ['aggregation'],
+            "level": "INFO",
+        },
     },
     "handlers": {
-        "warning": {
-            "level": "WARNING",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'loggs', 'warning.log'),
-            "formatter": 'simpleRe',
-        },
-        "debug": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'loggs', 'debug.log'),
-            "formatter": 'simpleRe',
-        },
-        "info": {
+        "generation": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'loggs', 'info.log'),
+            "filename": os.path.join(BASE_DIR, 'loggs', 'generation.log'),
             "formatter": 'simpleRe',
         },
-        "error": {
-            "level": "ERROR",
+        "errors": {
+            "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'loggs', 'Error.log'),
+            "filename": os.path.join(BASE_DIR, 'loggs', 'errors.log'),
+            "formatter": 'simpleRe',
+        },
+        "extraction": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, 'loggs', 'extraction.log'),
+            "formatter": 'simpleRe',
+        },
+        "aggregation": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, 'loggs', 'aggregation.log'),
             "formatter": 'simpleRe',
         },
     },
@@ -224,6 +224,7 @@ LOGGING = {
 }
 
 
+
 # Celery configuration
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
@@ -231,7 +232,6 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
 CELERY_IMPORTS = ('FETCH.tasks',)
 
 

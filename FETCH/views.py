@@ -12,8 +12,6 @@ from .models import Subdistrict
 from .models import Village
 from .models import District
 from .models import Crop
-from .models import Cropdatajson
-from .models import Cropdetails
 from .models import Aggridata   
 from .models import Process_status
 
@@ -23,7 +21,6 @@ import uuid
 # Importing serializers 
 from .serializers import VillageSerializer
 from .serializers import StateSerializer
-from .serializers import DistrictSerializer
 
 # For messages 
 from django.contrib import messages
@@ -33,17 +30,8 @@ from decouple import config
 
 
 # For user creation and login
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
-
-# Aggrigation functions
-from django.db.models import Sum
-
-# For time stamp
-import time
-from datetime import datetime
-
 
 # For downloading the pdf file 
 from django.http import FileResponse
@@ -59,10 +47,10 @@ import random
 
 # Importing loggers 
 import logging
-error_logger = logging.getLogger('error_logger')
-info_logger = logging.getLogger('django')
-warning_logger = logging.getLogger('warning_logger')
-debug_logger = logging.getLogger('dubug_logger')
+generation_logger = logging.getLogger('generation_logger')
+extraction_logger = logging.getLogger('extraction_logger')
+aggregation_logger = logging.getLogger('aggregation_logger')
+error_logger = logging.getLogger('django')
 
 # For downloading pdf file 
 from io import BytesIO
@@ -74,7 +62,9 @@ from .models import Aggridata
 # Imports for Tasks 
 from .tasks import generate_data_task
 from .tasks import save_json_task
-from celery import shared_task
+
+# For chaining 
+from celery import chain
 
 def createstate(request):
     try:
@@ -325,7 +315,6 @@ def subdistrict(request):
 #             messages.info(request, f"Exception occurred: {e}")
 #             return redirect('/home/')
 
-from celery import chain
 
 class GenerateDataView(View):
     def post(self, request):
@@ -334,7 +323,7 @@ class GenerateDataView(View):
             crop = request.POST.get('crop')
             process_id = uuid.uuid4()       
 
-            # Chain the tasks to ensure save_json_task runs after generate_data_task completes
+            # Chain the tasks for ensuring save_json_task runs after generate_data_task completes
             task_chain = chain(
                 generate_data_task.s(district, crop, process_id),
                 save_json_task.s(process_id)
@@ -345,26 +334,10 @@ class GenerateDataView(View):
             messages.success(request, "Data generation has been started in the background.")
             return redirect('/home/')
         except Exception as e:
-            error_logger.error(f"Error in GenerateDataView: {e}")
+            generation_logger.error(f"Error in GenerateDataView: {e}")
             messages.info(request, f"Exception occurred: {e}")
             return redirect('/home/')
 
-
-
-from django.shortcuts import render
-# from .models import DataGenerationStatus
-
-@login_required(login_url="/login/")
-def in_progress_view(request):
-    # try:
-    #     in_progress_tasks = DataGenerationStatus.objects.filter(status='in_progress')
-    #     context = {'in_progress_tasks': in_progress_tasks}
-    #     return render(request, 'states.html', context)
-    # except Exception as e:
-    #     error_logger.error(f"Error occurred in in_progress_view --->{e}")
-    #     messages.info(request, f"Exception occurred: {e}")
-    #     return render(request, 'states.html')
-    return HttpResponse(request,"hello bhavesh")
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def savejson(request,id):
@@ -375,7 +348,7 @@ def savejson(request,id):
         return redirect('/home/')
         
     except Exception as e:
-        error_logger.error(f"there is error in the savejson {e}")
+        extraction_logger.error(f"there is error in the savejson {e}")
         messages.info(request,f"There was error{e}")
         return redirect('/home/')
 
@@ -435,27 +408,31 @@ def gen_pdf(request, id):
     return response
 
 def generate_pdf_file(id):
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    elements = []
+    try:
 
-    # For fetchching the data for pdf 
-    data = Aggridata.objects.filter(district=id)
-  
-    # For Title and the header 
-    title = Paragraph(f"State:{data[0].state} district:{data[0].district} ")
-    elements.append(title)
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
 
-    # For table data
-    table_data = [['Sr. No', 'Crop', 'Total Area Under Cultivation (ha)']]
-    for i, dt in enumerate(data, start=1):
-        table_data.append([i, dt.crop, dt.area_cultivated])
+        # For fetchching the data for pdf 
+        data = Aggridata.objects.filter(district=id)
+    
+        # For Title and the header 
+        title = Paragraph(f"State:{data[0].state} district:{data[0].district} ")
+        elements.append(title)
 
-    table = Table(table_data)
-    elements.append(table)
+        # For table data
+        table_data = [['Sr. No', 'Crop', 'Total Area Under Cultivation (ha)']]
+        for i, dt in enumerate(data, start=1):
+            table_data.append([i, dt.crop, dt.area_cultivated])
 
-    # For building the pdf 
-    doc.build(elements)
+        table = Table(table_data)
+        elements.append(table)
 
-    buffer.seek(0)
-    return buffer
+        # For building the pdf 
+        doc.build(elements)
+
+        buffer.seek(0)
+        return buffer
+    except Exception as e:
+        error_logger.error(f"Error occoured in pdf generate_pdf_file function---->{e}")

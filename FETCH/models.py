@@ -104,5 +104,4 @@ class Process_status(models.Model):
     is_extraction = models.BooleanField(default=False)
     is_aggregation = models.BooleanField(default=False)
     is_completed = models.BooleanField(default=False)
-
     is_failed = models.BooleanField(default=False)

@@ -18,20 +18,17 @@
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
+                <thead class="thead-dark" id="header">
                     <tr>
-                        <th scope="col">sr no</th>
+                        <th scope="col  ">sr no</th>
                         <th scope="col">state</th>
                         <th scope="col">District</th>
                         <th scope="col">crop </th>
                         <th scope="col">Added time </th>
-                        <th scope="col">status</th>
-
-
-                        
+                        <th scope="col">status</th>                    
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="tbody">
                     {% for data in history %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
@@ -76,6 +73,13 @@
     }
     .card-title {
         color: #FEFFFF !important;
+    }
+    .card-body{
+        max-height: 750px;
+        overflow-y: auto;
+    }
+    #header{
+        position: static;
     }
 </style>
 
