@@ -19,7 +19,6 @@ from .views import district
 from .views import subdistrict
 # from .views import village
 # from .views import crops
-from .views import savejson
 from .views import viewdata
 from .views import showdistricttables
 from .views import showhistory
@@ -59,7 +58,6 @@ urlpatterns = [
     path('district/',district,name='district_url'),
     path('subdistrict/',subdistrict,name='subdistrict_url'),
     # path('village/',village,name='village_url'),
-    path('savejson/<id>/',savejson,name='savejson_url'),
     path('viewdata/',viewdata,name='viewdata_url'),
     path('showdistricttable/<id>/',showdistricttables,name='showdistricttables_url'),
     path('showhistory/',showhistory,name='history_url'),

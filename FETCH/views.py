@@ -223,8 +223,8 @@ def createvillage(request):
 class DistrictGeneric(APIView):
     try:
         def get(self,request):
-            id_ = request.GET.get('id')
-            district_obj = District.objects.filter(state_id=id_)
+            state= request.GET.get('id')
+            district_obj = District.objects.filter(state_id=state)
             serializer = DistrictSerializer(district_obj,many=True)
             return Response({"status:":200,"payload":serializer.data})
     except Exception as e:
@@ -233,8 +233,8 @@ class DistrictGeneric(APIView):
 class SubdistrictGeneric(APIView):
     try:
         def get(self,request):
-            id_ = request.GET.get('id')
-            district_obj = Subdistrict.objects.filter(district_id=id_)
+            district= request.GET.get('id')
+            district_obj = Subdistrict.objects.filter(district_id=district)
             serializer = SubdistrictSerializer(district_obj,many=True)
             return Response({"status:":200,"payload":serializer.data})
     except Exception as e:
@@ -243,8 +243,8 @@ class SubdistrictGeneric(APIView):
 class VillageGeneric(APIView):
     try:
         def get(self, request):
-            id_ = request.GET.get('id')
-            village_obj = Village.objects.filter(subdistrict_id=id_)
+            subdistrict = request.GET.get('id')
+            village_obj = Village.objects.filter(subdistrict_id=subdistrict)
             serializer = VillageSerializer(village_obj, many=True)
             return Response({"status": 200, "payload": serializer.data})
     except Exception as e:
@@ -334,23 +334,6 @@ class GenerateDataView(View):
             return redirect('/home/')
 
 
-
-# Currently not in use due to the chain we are using in above function 
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def savejson(request,id):
-    try:
-        save_json_task.delay(id)
-           
-        messages.info(request,"The data is beign extracted")
-        return redirect('/home/')
-        
-    except Exception as e:
-        extraction_logger.error(f"there is error in the savejson {e}")
-        messages.info(request,f"There was error{e}")
-        return redirect('/home/')
-
-
-        
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url="/login/")

@@ -113,6 +113,8 @@ def generate_data_task(district, crop,process_id):
         
         # Update task status to 'failed'
         Process_status.objects.filter(process_id=process_id).update(is_failed=True)
+        Process_status.objects.filter(process_id=process_id).update(is_completed=True)
+
         return False
     
 @shared_task
@@ -200,6 +202,7 @@ def save_json_task(_,id):
         aggirgatedata()
         Process_status.objects.filter(process_id=id).update(is_aggregation=True)
         Process_status.objects.filter(process_id=id).update(is_completed=True)
+        extraction_logger.info("data has been aggrigated for ")
 
         
 
@@ -207,6 +210,8 @@ def save_json_task(_,id):
 
     except Exception as e:
         extraction_logger.error(f"errror occured in savejson --->{e}")
+        Process_status.objects.filter(process_id=id).update(is_completed=True)
+
         Process_status.objects.filter(process_id=id).update(is_failed=True)
 
         return False
