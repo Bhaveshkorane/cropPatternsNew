@@ -134,6 +134,7 @@ def aggirgatedata():
                 crop=data['crop_type'],
                 defaults={'area_cultivated': data['total_area']}
             )
+            aggregation_logger.info(f"Data has been aggrigated {district_name}")
             
         
     except Exception as e:
