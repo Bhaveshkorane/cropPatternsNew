@@ -19,6 +19,11 @@ import uuid
 # Aggrigation functions
 from django.db.models import Sum
 
+# For error logging 
+import logging
+error_logger = logging.getLogger('error_logger')
+
+
 
 
 
@@ -119,6 +124,7 @@ class generatedata(APIView):
 
             return Response({"status:":200,"payload":data})
         except Exception as e:
+            error_logger.error(f"there is problem in generatedata---->{e}")
             return Response({"status:":404,"payload":data})
         
 def aggirgatedata():

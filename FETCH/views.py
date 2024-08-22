@@ -21,6 +21,8 @@ import uuid
 # Importing serializers 
 from .serializers import VillageSerializer
 from .serializers import StateSerializer
+from .serializers import DistrictSerializer
+from .serializers import SubdistrictSerializer
 
 # For messages 
 from django.contrib import messages
@@ -221,18 +223,28 @@ def createvillage(request):
 class DistrictGeneric(APIView):
     try:
         def get(self,request):
-            id_=request.GET.get('id')
+            id_ = request.GET.get('id')
             district_obj = District.objects.filter(state_id=id_)
-            serializer = District(district_obj,many=True)
+            serializer = DistrictSerializer(district_obj,many=True)
             return Response({"status:":200,"payload":serializer.data})
     except Exception as e:
         error_logger.error(f"error occured in DistrictGeneric--->{e}")
-    
+
+class SubdistrictGeneric(APIView):
+    try:
+        def get(self,request):
+            id_ = request.GET.get('id')
+            district_obj = Subdistrict.objects.filter(district_id=id_)
+            serializer = SubdistrictSerializer(district_obj,many=True)
+            return Response({"status:":200,"payload":serializer.data})
+    except Exception as e:
+        error_logger.error(f"error occured in DistrictGeneric--->{e}")
 
 class VillageGeneric(APIView):
     try:
         def get(self, request):
-            village_obj = Village.objects.filter(subdistrict_id=461)
+            id_ = request.GET.get('id')
+            village_obj = Village.objects.filter(subdistrict_id=id_)
             serializer = VillageSerializer(village_obj, many=True)
             return Response({"status": 200, "payload": serializer.data})
     except Exception as e:
@@ -297,24 +309,7 @@ def subdistrict(request):
 #     return render(request, 'partials/village.html', context)
 
 
-# For parallel processing 
-
-# class GenerateDataView(View):
-#     def post(self, request):
-#         try:
-#             district = request.POST.get('district')
-#             crop = request.POST.get('crop')
-#             process_id = uuid.uuid4()       
-#             generate_data_task.delay(district, crop,process_id)
-#             save_json_task.delay(process_id)
-
-#             messages.success(request, "Data generation has been started in the background.")
-#             return redirect('/home/')
-#         except Exception as e:
-#             error_logger.error(f"Error in GenerateDataView: {e}")
-#             messages.info(request, f"Exception occurred: {e}")
-#             return redirect('/home/')
-
+# For parallel processing and chaining
 
 class GenerateDataView(View):
     def post(self, request):
@@ -339,6 +334,8 @@ class GenerateDataView(View):
             return redirect('/home/')
 
 
+
+# Currently not in use due to the chain we are using in above function 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def savejson(request,id):
     try:

@@ -11,6 +11,7 @@ from .views import createvillage
 from .views import VillageGeneric
 from .views import StateGeneric
 from .views import DistrictGeneric
+from .views import SubdistrictGeneric
 
 # Imports from views 
 from .views import state
@@ -46,7 +47,10 @@ urlpatterns = [
     # For fetching data from the database through api 
     path('generic-village/',VillageGeneric.as_view()),
     path('generic-state/',StateGeneric.as_view()),
-    path('generic-distirct/',DistrictGeneric.as_view()),
+    path('generic-district/',DistrictGeneric.as_view()),
+    path('generic-subdistrict/',SubdistrictGeneric.as_view()),
+
+    
     path('generate-data/', GenerateDataView.as_view(), name='generate_data_view'),
     path('gene/',generatedata.as_view()),
 

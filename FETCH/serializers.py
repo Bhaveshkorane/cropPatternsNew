@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import State
 from .models import Village
 from .models import District
+from .models import Subdistrict
 
 from django.contrib.auth.models import User
 
@@ -24,3 +25,8 @@ class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
         exclude = ['districtcreated','districtupdated']
+
+class SubdistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subdistrict 
+        exclude = ['subdistrictcreated','subdistrictupdated']
