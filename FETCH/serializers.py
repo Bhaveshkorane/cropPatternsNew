@@ -12,21 +12,21 @@ class VillageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Village
         #fields = '__all__'
-        exclude=['villagecreated','villageupdated']
+        exclude=['created_at','updated_at']
 
 
 class StateSerializer(serializers.ModelSerializer):
     class Meta:
         model = State
-        exclude=['statecreated','stateupdated']
+        exclude=['created_at','updated_at']
         #fields='__all__'
 
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
-        exclude = ['districtcreated','districtupdated']
+        exclude = ['created_at','updated_at']
 
 class SubdistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subdistrict 
-        exclude = ['subdistrictcreated','subdistrictupdated']
+        exclude = ['created_at','updated_at']

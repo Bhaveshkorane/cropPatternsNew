@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'cropPatterns.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cropPatterns',
+        'NAME': 'cropPatterns_new',
         'USER':'postgres',
         'PASSWORD':config('PASSWORD'),
         'HOST':'LOCALHOST',

@@ -30,7 +30,7 @@
                                 hx-target="#district">
                             <option selected>Open select menu</option>
                             {% for i in states %}
-                            <option value="{{ i.statecode }}">{{ i.englishname }}</option>
+                            <option value="{{ i.state_code }}">{{ i.english_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -44,7 +44,7 @@
                                 id="crop-select">
                             <option selected>All</option>
                             {% for i in crops %}
-                            <option value="{{ i.id }}">{{ i.cropname }}</option>
+                            <option value="{{ i.id }}">{{ i.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -75,17 +75,17 @@
         <tbody>
             {% for i in process_status %}
             <tr>
-                <td>{{ i.state }}</td>
-                <td>{{ i.district }}</td>
-                <td>{{ i.crop }}</td>
-                <td class="{% if i.is_generation %}bg-success{% else %}bg-danger{% endif %}">
-                             {% if i.is_generation %}Completed{% else %}Running{% endif %}
+                <td>{{ i.state_name }}</td>
+                <td>{{ i.district_name }}</td>
+                <td>{{ i.crop_type }}</td>
+                <td class="{% if i.is_generating %}bg-success{% else %}bg-danger{% endif %}">
+                             {% if i.is_generating %}Completed{% else %}Running{% endif %}
                 </td>
-                <td class=" {% if i.is_extraction %}bg-success{% else %}bg-danger{% endif %}">
-                             {% if i.is_extraction %}Completed{% else %}Not started{% endif %}
+                <td class=" {% if i.is_extracting %}bg-success{% else %}bg-danger{% endif %}">
+                             {% if i.is_extracting %}Completed{% else %}Not started{% endif %}
                 </td>
-                <td class="{% if i.is_aggregation %}bg-success{% else %}bg-danger{% endif %}" >
-                             {% if i.is_aggregation %}Completed{% else %}Not started{% endif %}
+                <td class="{% if i.is_aggregating %}bg-success{% else %}bg-danger{% endif %}" >
+                             {% if i.is_aggregating %}Completed{% else %}Not started{% endif %}
 
                 </td>
             </tr>

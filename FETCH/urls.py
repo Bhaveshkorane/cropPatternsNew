@@ -1,13 +1,13 @@
 from django.urls import path
 from django.views.generic.base import RedirectView
 
-# Imports for creting/inserting the data into database 
-from .views import createstate
-from .views import createdistrict
-from .views import createsubdistrict
-from .views import createvillage
+# # Imports for creting/inserting the data into database 
+from .views import create_state
+from .views import create_district
+from .views import create_subdistrict
+from .views import create_village
 
-# Imports for API's
+# # Imports for API's
 from .views import VillageGeneric
 from .views import StateGeneric
 from .views import DistrictGeneric
@@ -28,7 +28,7 @@ from .views import GenerateDataView
 
 
 
-# From utils 
+# From .utils 
 from .utils import generatedata
 
 
@@ -37,13 +37,13 @@ urlpatterns = [
 
     # For inserting data into database 
     path('', RedirectView.as_view(url='login/', permanent=False)),
-    path('createstate/',createstate,name='createstate_url'),
-    path('createdistrict/',createdistrict,name='createdistrict_url'),
-    path('createsubdistrict/',createsubdistrict,name='createsubdistrict_url'),
-    path('createvillage/',createvillage,name='createvillage_url'),
+    path('createstate/',create_state,name='createstate_url'),
+    path('createdistrict/',create_district,name='createdistrict_url'),
+    path('createsubdistrict/',create_subdistrict,name='createsubdistrict_url'),
+    path('createvillage/',create_village,name='createvillage_url'),
 
     
-    # For fetching data from the database through api 
+    # # For fetching data from the database through api 
     path('generic-village/',VillageGeneric.as_view()),
     path('generic-state/',StateGeneric.as_view()),
     path('generic-district/',DistrictGeneric.as_view()),
@@ -59,11 +59,11 @@ urlpatterns = [
     path('subdistrict/',subdistrict,name='subdistrict_url'),
     # path('village/',village,name='village_url'),
     path('viewdata/',viewdata,name='viewdata_url'),
-    path('showdistricttable/<id>/',showdistricttables,name='showdistricttables_url'),
+    path('showdistricttable/<district_name>/',showdistricttables,name='showdistricttables_url'),
     path('showhistory/',showhistory,name='history_url'),
 
 
-    path('genpdf/<id>/',gen_pdf,name="genpdf_url"),
+    path('genpdf/<district_name>/',gen_pdf,name="genpdf_url"),
 
    
 ]

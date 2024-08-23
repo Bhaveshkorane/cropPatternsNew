@@ -31,9 +31,9 @@
                     {% for i in data %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ i.state }}</td>
-                        <td>{{ i.district }}</td>
-                        <td><a href="/showdistricttable/{{ i.district }}/" class="btn btn-primary">View</a></td>
+                        <td>{{ i.state_name }}</td>
+                        <td>{{ i.district_name }}</td>
+                        <td><a href="/showdistricttable/{{ i.district_name }}/" class="btn btn-primary">View</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

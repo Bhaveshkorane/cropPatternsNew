@@ -35,9 +35,9 @@
                     {% for data in history %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ data.state }}</td>
-                        <td>{{ data.district }}</td>
-                        <td>{{ data.crop }}</td>
+                        <td>{{ data.state_name }}</td>
+                        <td>{{ data.district_name }}</td>
+                        <td>{{ data.crop_type }}</td>
                         <td>{{ data.timestamp }}</td>
                         <td class="{% if data.is_failed %}bg-danger{% else %}bg-success{% endif %}">
                             {% if data.is_failed %}Failed{% else %}Success{% endif %}

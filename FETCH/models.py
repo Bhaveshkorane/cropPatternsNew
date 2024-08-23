@@ -3,56 +3,62 @@ from django.db import models
 # # Create your models here.
 
 class State(models.Model):
-    statecode = models.IntegerField(primary_key=True,default=0)
-    englishname = models.CharField(max_length=300,null=True,blank=True)
-    localname = models.CharField(max_length=300,null=True,blank=True)
-    statecreated = models.DateTimeField(auto_now_add=True,null=True,blank=True)
-    stateupdated = models.DateTimeField(auto_now=True,null=True,blank=True)
+    state_code = models.IntegerField(primary_key=True)
+    english_name = models.CharField(max_length=300,null=True,blank=True)
+    local_name = models.CharField(max_length=300,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True,blank=True)
     
 class District(models.Model):
-    districtcode = models.IntegerField(primary_key=True,default=1)
-    englishname = models.CharField(max_length=200,blank=True,null=True)
-    localname = models.CharField(max_length=200,blank=True,null=True)
-    state = models.ForeignKey(State,on_delete=models.CASCADE,default=0,null=True,blank=True)
-    districtcreated = models.DateTimeField(auto_now_add=True,null=True,blank=True)
-    districtupdated = models.DateTimeField(auto_now=True,null=True,blank=True)
+    district_code = models.IntegerField(primary_key=True)
+    english_name = models.CharField(max_length=200,blank=True,null=True)
+    local_name = models.CharField(max_length=200,blank=True,null=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True,blank=True)
+    state = models.ForeignKey(State,on_delete=models.CASCADE,null=True,blank=True)
+
 
 
 class Subdistrict(models.Model):
-    subdistrictcode = models.IntegerField(primary_key=True,default=2)
-    englishname = models.CharField(max_length=200,null=True,blank=True)
-    localname = models.CharField(max_length=200,null=True,blank=True)
-    district = models.ForeignKey(District,on_delete=models.CASCADE,default=1121,blank=True,null=True)          
-    subdistrictcreated = models.DateTimeField(auto_now_add=True,blank=True,null=True)
-    subdistrictupdated = models.DateTimeField(auto_now=True,blank=True,null=True)
-    state = models.IntegerField(null=True,blank=True,default=0)                                                 
+    subdistrict_code = models.IntegerField(primary_key=True)
+    english_name = models.CharField(max_length=200,null=True,blank=True)
+    local_name = models.CharField(max_length=200,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,blank=True,null=True) 
+    updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)     
+    district = models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True)
+    state = models.ForeignKey(State,on_delete=models.CASCADE,null=True,blank=True)         
+          
+                                        
 
 
 class Village(models.Model):
-    villagecode = models.IntegerField(primary_key=True, default=3)
-    englishname = models.CharField(max_length=200, null=True, blank=True)
-    localname = models.CharField(max_length=200, null=True, blank=True)
-    subdistrict = models.ForeignKey(Subdistrict, on_delete=models.CASCADE, default=12342, blank=True, null=True)                 
-    villagecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    villageupdated = models.DateTimeField(auto_now=True, blank=True, null=True)
-    state = models.ForeignKey('State', null=True, blank=True, default=None, on_delete=models.CASCADE)
-    district = models.ForeignKey('District', null=True, blank=True, default=None, on_delete=models.CASCADE)
+    village_code = models.IntegerField(primary_key=True)
+    english_name = models.CharField(max_length=200, null=True, blank=True)
+    local_name = models.CharField(max_length=200, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    subdistrict = models.ForeignKey(Subdistrict, on_delete=models.CASCADE, blank=True, null=True)
+    district = models.ForeignKey(District, null=True, blank=True, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, null=True, blank=True, on_delete=models.CASCADE)
+
+
+
 
 
 
 class Crop(models.Model):
-    cropname = models.CharField(max_length=200) 
+    name = models.CharField(max_length=200) 
 
 
-class Cropdatajson(models.Model):
-    cropdata = models.JSONField(null=True, blank=True, default=None)
-    district = models.CharField(max_length=255, null=True, blank=True, default=None)
-    state = models.CharField(max_length=255, null=True, blank=True, default=None)
+class CropDataJson(models.Model):
+    crop_data = models.JSONField(null=True, blank=True)
+    district_name = models.CharField(max_length=255, null=True, blank=True)
+    state_name = models.CharField(max_length=255, null=True, blank=True)
     process_id = models.CharField(max_length=255, null=True, blank=True)
     added_time = models.CharField(max_length=255, null=True, blank=True)
     crop_type = models.CharField(max_length=255, null=True, blank=True)
 
-class Cropdetails(models.Model):
+class CropDetails(models.Model):
     
     # Crop details 
     unique_id = models.CharField(max_length=100,primary_key=True)
@@ -62,9 +68,9 @@ class Cropdetails(models.Model):
     soil_type = models.CharField(max_length=50,null=True,blank=True)
     irrigation_method = models.CharField(max_length=100,null=True,blank=True)
     village = models.ForeignKey(Village, on_delete=models.CASCADE,null=True,blank=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE,null=True,blank=True,default=27)
-    district = models.ForeignKey(District,on_delete=models.CASCADE,null=True,blank=True,default=480)
-    subdistrict = models.ForeignKey(Subdistrict,on_delete=models.CASCADE,null=True,blank=True,default=3648)
+    state = models.ForeignKey(State, on_delete=models.CASCADE,null=True,blank=True)
+    district = models.ForeignKey(District,on_delete=models.CASCADE,null=True,blank=True)
+    subdistrict = models.ForeignKey(Subdistrict,on_delete=models.CASCADE,null=True,blank=True)
 
     # Weather data 
     temp_min = models.IntegerField(null=True,blank=True)
@@ -81,27 +87,29 @@ class Cropdetails(models.Model):
 
     # Pesticides 
     pesticide_type = models.CharField(max_length=100,null=True,blank=True)
-    pesticide_quantity_l = models.IntegerField(null=True,blank=True)  
+    pesticide_quantity_l = models.IntegerField(null=True,blank=True)
+
+    process_id = models.CharField(max_length=255, null=True, blank=True)
 
 
 
-class Aggridata(models.Model):
-    state = models.CharField(max_length=200,  null=True, blank=True)
-    district = models.CharField(max_length=200, null=True, blank=True)
-    crop = models.CharField(max_length=100,null=True,blank=True)
+class AggregationData(models.Model):
+    state_name = models.CharField(max_length=200,  null=True, blank=True)
+    district_name = models.CharField(max_length=200, null=True, blank=True)
+    crop_type = models.CharField(max_length=100,null=True,blank=True)
     area_cultivated = models.IntegerField(null=True,blank=True)
 
 
 
-class Process_status(models.Model):
-    district = models.CharField(max_length=255,null=True,blank=True)
-    state = models.CharField(max_length=255,null=True,blank=True)
-    process_id = models.CharField(null=True, blank=True)
-    crop = models.CharField(max_length=255)
+class ProcessStatus(models.Model):
+    district_name = models.CharField(max_length=255,null=True,blank=True)
+    state_name = models.CharField(max_length=255,null=True,blank=True)
+    process_id = models.CharField(max_length=255,null=True, blank=True)
+    crop_type = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    is_generation = models.BooleanField(default=False)
-    is_extraction = models.BooleanField(default=False)
-    is_aggregation = models.BooleanField(default=False)
-    is_completed = models.BooleanField(default=False)
+    is_generating = models.BooleanField(default=False)
+    is_extracting = models.BooleanField(default=False)
+    is_aggregating = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False)
     is_failed = models.BooleanField(default=False)

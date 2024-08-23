@@ -9,8 +9,8 @@ from django.views import View
 # Importing models 
 from .models import State
 from .models import District
-from .models import Cropdetails
-from .models import Aggridata   
+from .models import CropDetails
+from .models import AggregationData  
 
 # For logging 
 import logging
@@ -35,7 +35,7 @@ import random
 
 # For downloading pdf file 
 from io import BytesIO
-from .models import Aggridata
+from .models import AggregationData
 
 
 # uuid for generting the unique id 
@@ -46,16 +46,8 @@ class generatedata(APIView):
         try:
             unique_id = uuid.uuid4()
             data = request.data
-            # params = request.query_params  
             village = data['village']
-            # village = params['village']
-            
-
-        
-            # village_code =  params['village_code']
             village_code =  data['village_code']
-
-            # crop =  params['crop']
             crop =  data['crop']
 
             area = random.randint(1,39)
@@ -115,31 +107,31 @@ class generatedata(APIView):
                     }
             generation_logger.info(f" Data generated for {village}")
             return Response({"status:":200,"payload":data})
+        
         except Exception as e:
             error_logger.error(f"there is problem in generatedata---->{e}")
             generation_logger.error(f"Problem occured --->{e}")
             return Response({"status:":404,"payload":data})
         
-def aggirgatedata():
-    # Perform the aggregation
+def aggirgatedata(process_id):
     try:
-        aggregated_data = Cropdetails.objects.values('state', 'district', 'crop_type').annotate(total_area=Sum('area_cultivated'))
+        aggregated_data = CropDetails.objects.filter(process_id=process_id).values('state', 'district', 'crop_type').annotate(total_area=Sum('area_cultivated'))
 
         for data in aggregated_data:
-            state_name = State.objects.get(statecode=data['stateE']).englishname
-            district_name = District.objects.get(districtcode=data['district']).englishname
-            Aggridata.objects.update_or_create(
-                state= state_name,
-                district    = district_name,
-                crop=data['crop_type'],
+            state_name = State.objects.get(state_code=data['state']).english_name
+            district_name = District.objects.get(district_code=data['district']).english_name
+            AggregationData.objects.update_or_create(
+                state_name= state_name,
+                district_name= district_name,
+                crop_type=data['crop_type'],
                 defaults={'area_cultivated': data['total_area']}
             )
-            aggregation_logger.info(f"Data has been aggrigated {district_name}")
-            
+            aggregation_logger.info(f"Data has been aggregated for {district_name}")
         
     except Exception as e:
-        aggregation_logger.error(f"errror occured in aggirgatedata--->{e}")
-        error_logger(f"error in aggrigation data {e}")
+        aggregation_logger.error(f"Error occurred in aggirgatedata--->{e}")
+        error_logger.error(f"Error in aggregating data: {e}")
+
         
 
 
