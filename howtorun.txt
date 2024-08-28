@@ -1,4 +1,4 @@
-1.Activate the environment
+1.Activate the environment present At 
 
 2. start the server 
 python manage.py runserver

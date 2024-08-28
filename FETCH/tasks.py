@@ -72,7 +72,7 @@ def generate_data_task(district, crop,process_id):
                             district_name=district_name,
                             state_name=state_name,
                             process_id=str(process_id),
-                            added_time=str(added_time),
+                            added_time=added_time,
                             crop_type=cp
                         )
                         dt.save() 
@@ -95,7 +95,7 @@ def generate_data_task(district, crop,process_id):
                         district_name=district_name,
                         state_name=state_name,
                         process_id=str(process_id),
-                        added_time=str(added_time),
+                        added_time=added_time,
                         crop_type=crop_name                    )
                     ProcessStatus.objects.filter(process_id=process_id).update(crop_type=crop_name)
                     dt.save()

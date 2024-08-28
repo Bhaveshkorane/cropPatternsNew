@@ -42,10 +42,6 @@ class Village(models.Model):
     state = models.ForeignKey(State, null=True, blank=True, on_delete=models.CASCADE)
 
 
-
-
-
-
 class Crop(models.Model):
     name = models.CharField(max_length=200) 
 
@@ -55,7 +51,7 @@ class CropDataJson(models.Model):
     district_name = models.CharField(max_length=255, null=True, blank=True)
     state_name = models.CharField(max_length=255, null=True, blank=True)
     process_id = models.CharField(max_length=255, null=True, blank=True)
-    added_time = models.CharField(max_length=255, null=True, blank=True)
+    added_time = models.DateTimeField(max_length=255, null=True, blank=True)
     crop_type = models.CharField(max_length=255, null=True, blank=True)
 
 class CropDetails(models.Model):
