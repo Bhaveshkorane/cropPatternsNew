@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('FETCH', '0006_cropdetails_process_id_and_more'),
+        ('fetch', '0006_cropdetails_process_id_and_more'),
     ]
 
     operations = [

@@ -2,8 +2,8 @@
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from FETCH import urls
-from AUTHENTICATION import auth_urls
+from fetch import urls
+from authentication import auth_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),

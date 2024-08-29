@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('FETCH', '0005_alter_village_village_code'),
+        ('fetch', '0005_alter_village_village_code'),
     ]
 
     operations = [

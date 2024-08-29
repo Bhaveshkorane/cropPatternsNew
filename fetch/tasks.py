@@ -31,7 +31,7 @@ def generate_data_task(district, crop,process_id):
     try:
         subdistricts = Subdistrict.objects.filter(district_id=district)
 
-        # Fetch the district object
+        # fetch the district object
         district_obj = District.objects.select_related('state').get(district_code=district)
 
         # Extract the district name and state name

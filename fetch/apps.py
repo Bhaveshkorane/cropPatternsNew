@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class FetchConfig(AppConfig):
+class fetchConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'FETCH'
+    name = 'fetch'

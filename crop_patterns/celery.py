@@ -3,9 +3,9 @@ import os
 from celery import Celery
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cropPatterns.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crop_patterns.settings')
 
-app = Celery('cropPatterns')
+app = Celery('crop_patterns')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

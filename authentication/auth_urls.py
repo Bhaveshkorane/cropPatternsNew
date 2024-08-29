@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from FETCH import urls
+from fetch import urls
 
 # For user registraion 
 from .views import registeruser

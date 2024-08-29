@@ -108,7 +108,7 @@ def create_district(request):
             state_code=state.state_code
 
 
-            # Fetching the data from API
+            # fetching the data from API
             # query='https://lgdirectory.gov.in/webservices/lgdws/districtList?stateCode='+str(id_)
             # query=f'https://lgdirectory.gov.in/webservices/lgdws/districtList?stateCode={id_}'
             query=config('district_api_link')+str(state_code)
